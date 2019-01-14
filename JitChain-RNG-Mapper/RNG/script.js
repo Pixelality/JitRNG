@@ -1,13 +1,31 @@
-//generate distribution dataset
-var data = Array.from({length: 36}, () => 0);
-
-for(var i = 0; i < 10**7/* = n*/; i++){
-  // Generate Random Numbers
-  var rndArray = Array.from({length: 10}, () => Math.floor(Math.random() * 37));
-  //console.log(rndArray);
-  //console.log(hashfunction(rndArray));
-  data[hashfunction(rndArray)] += 1;
+String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length == 0) {
+        return hash;
+    }
+    for (var i = 0; i < this.length; i++) {
+        var char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
 }
+//generate distribution dataset
+
+var data = Array.from({length: 37}, () => 0);
+// var n = 10**8;
+//
+// for(var i = 0; i < n/* = n*/; i++){
+//   // Generate Random Numbers
+//   var rndArray = Array.from({length: 10}, () => Math.floor(Math.random() * 37));
+//   //console.log(rndArray);
+//   //console.log(hashfunction(rndArray));
+//   data[hashfunction(rndArray)] += 1;
+// }
+//
+// console.log((Math.max(...data)/n)*100);
+// console.log((Math.min(...data)/n)*100);
+
 // var sum = input.reduce((a, b) => a + b, 0);
 // console.log(sum);
 // var random = sum % 50;
@@ -41,8 +59,30 @@ var myChart = new Chart(ctx, {
     }
 });
 
+function random_rgb() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgb(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s)+')';
+}
+
+let test1 = setInterval(() => tick(),0);
+let test2 = setInterval(() => myChart.data.datasets[0].backgroundColor = random_rgb(),500);
+
+function tick(){
+  var n = 100;
+  for(var i = 0; i < n/* = n*/; i++){
+    var rndArray = Array.from({length: 10}, () => Math.floor(Math.random() * 37));
+    //console.log(rndArray);
+    //console.log(hashfunction(rndArray));
+    data[hashfunction(rndArray)] += 1;
+    myChart.update(data);
+  }
+  console.log("Zahl");
+}
+
 // 10 random numbers -> 1
 function hashfunction(rndArray){
-  var sum = rndArray.reduce((a, b) => a + b, 0);
-  return sum % 36;
+  var str = rndArray.toString();
+  var hash = Math.abs(str.hashCode());
+  //console.log("hash: "+hash+" random: "+hash%36);
+  return hash % 37;
 }
